@@ -21,6 +21,7 @@ const Calculator = () => {
   return (
     <div className='w-80 flex justify-center items-center flex-col shadow-md shadow-slate-600 rounded-2xl overflow-hidden glassmorphism'>
       <div className='border-b-2 w-full p-3 h-28 flex flex-col justify-between'>
+          {/* output  */}
         <div className='flex justify-start items-start flex-wrap'>
           {output} {operator} {input}
         </div>
