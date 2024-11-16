@@ -30,7 +30,7 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
                 break;
         }
         setInput(""); // Clear input after calculation
-    }, [input, operator, output, setInput, setOutput]);
+    }, [input, operator, output, setInput, setOutput]); // Add operator here to ensure proper re-calculation
 
     const onClickHandler = useCallback(() => {
         const value = buttonRef?.current.innerHTML;
