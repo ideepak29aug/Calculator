@@ -114,7 +114,7 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [buttonText, input, output, operator]);
+    }, [buttonText, input, output, operator, onClickHandler]);
 
     return (
         <div ref={buttonRef} onClick={onClickHandler} className={buttonClasses}>
