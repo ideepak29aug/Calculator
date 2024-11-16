@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useCallback } from "react";
 
-const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, input, operator, setOperator }) => {
+const Button = ({ 
+    buttonText = "", 
+    buttonClasses, 
+    setInput, 
+    setOutput, 
+    output, 
+    input, 
+    operator, 
+    setOperator 
+}) => {
     const buttonRef = useRef();
 
     const calculateResult = useCallback(() => {
@@ -30,10 +39,12 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
                 break;
         }
         setInput(""); // Clear input after calculation
-    }, [input, operator, output, setInput, setOutput]); // Add operator here to ensure proper re-calculation
+    }, [input, output, setInput, setOutput, operator]);
 
     const onClickHandler = useCallback(() => {
-        const value = buttonRef?.current.innerHTML;
+        if (!buttonRef.current) return;
+        
+        const value = buttonRef.current.innerHTML;
 
         switch (value) {
             case "+":
@@ -46,25 +57,25 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
                 } else {
                     calculateResult();
                 }
-                setOperator(value); // Store the current operator
+                setOperator(value);
                 setInput("");
                 break;
             case "=":
                 if (operator && input) {
                     calculateResult();
-                    setOperator(null); // Clear operator after calculation
+                    setOperator(null);
                 }
                 break;
             case "AC":
                 setInput("");
                 setOutput("");
-                setOperator(null); // Reset operator state
+                setOperator(null);
                 break;
             case "DEL":
                 setInput((prevInput) => prevInput.slice(0, -1));
                 break;
             case ".":
-                if (!input.includes(".")) { // Check if input already contains a '.'
+                if (!input.includes(".")) {
                     setInput((prevInput) => prevInput + ".");
                 }
                 break;
@@ -72,13 +83,11 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
                 setInput((prevInput) => prevInput + value);
                 break;
         }
-    }, [calculateResult, input, output, setInput, setOutput, setOperator]);
+    }, [calculateResult, input, output, setInput, setOutput, setOperator, operator]);
 
-    // Map keyboard keys to button actions
     useEffect(() => {
         const handleKeyDown = (event) => {
             const key = event.key;
-
             const keyMap = {
                 "+": "+",
                 "-": "-",
@@ -101,19 +110,13 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
                 ".": ".",
             };
 
-            if (keyMap[key]) {
-                // Simulate a button click by calling the onClickHandler
-                if (buttonText === keyMap[key]) {
-                    onClickHandler();
-                }
+            if (keyMap[key] && buttonText === keyMap[key]) {
+                onClickHandler();
             }
         };
 
         document.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
+        return () => document.removeEventListener("keydown", handleKeyDown);
     }, [buttonText, onClickHandler]);
 
     return (
