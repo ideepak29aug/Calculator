@@ -1,9 +1,38 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 
 const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, input, operator, setOperator }) => {
     const buttonRef = useRef();
 
-    const onClickHandler = () => {
+    const calculateResult = useCallback(() => {
+        switch (operator) {
+            case "+":
+                setOutput(Number(output) + Number(input));
+                break;
+            case "-":
+                setOutput(Number(output) - Number(input));
+                break;
+            case "x":
+                setOutput(Number(output) * Number(input));
+                break;
+            case "/":
+                setOutput(
+                    input === output
+                        ? "Undefined!"
+                        : Number(input) !== 0
+                        ? Number(output) / Number(input)
+                        : "Error"
+                );
+                break;
+            case "%":
+                setOutput(Number(output) % Number(input));
+                break;
+            default:
+                break;
+        }
+        setInput(""); // Clear input after calculation
+    }, [input, operator, output, setInput, setOutput]);
+
+    const onClickHandler = useCallback(() => {
         const value = buttonRef?.current.innerHTML;
 
         switch (value) {
@@ -43,36 +72,7 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
                 setInput((prevInput) => prevInput + value);
                 break;
         }
-    };
-
-    const calculateResult = () => {
-        switch (operator) {
-            case "+":
-                setOutput(Number(output) + Number(input));
-                break;
-            case "-":
-                setOutput(Number(output) - Number(input));
-                break;
-            case "x":
-                setOutput(Number(output) * Number(input));
-                break;
-            case "/":
-                setOutput(
-                    input === output
-                        ? "Undefined!"
-                        : Number(input) !== 0
-                            ? Number(output) / Number(input)
-                            : "Error"
-                );
-                break;
-            case "%":
-                setOutput(Number(output) % Number(input));
-                break;
-            default:
-                break;
-        }
-        setInput(""); // Clear input after calculation
-    };
+    }, [calculateResult, input, output, setInput, setOutput, setOperator]);
 
     // Map keyboard keys to button actions
     useEffect(() => {
@@ -114,7 +114,7 @@ const Button = ({ buttonText = "", buttonClasses, setInput, setOutput, output, i
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [buttonText, input, output, operator, onClickHandler]);
+    }, [buttonText, onClickHandler]);
 
     return (
         <div ref={buttonRef} onClick={onClickHandler} className={buttonClasses}>
